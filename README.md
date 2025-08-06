@@ -110,6 +110,22 @@ For the complete Sakila dataset with all 16,000+ records:
 - `film`: 1,000 records
 - And more...
 
+### Option 4: Using Import Scripts (Alternative)
+
+For users who prefer using the provided import scripts:
+
+1. **Clean import (drops existing tables):**
+   ```bash
+   mysql -u root -p fun_sql < import_full_sakila_fixed.sql
+   mysql -u root -p fun_sql < sakila-data-fun_sql.sql
+   ```
+
+2. **Import with verification:**
+   ```bash
+   mysql -u root -p fun_sql < import_full_sakila_data.sql
+   ```
+   *Note: This script uses SOURCE commands and works best when run from within MySQL client.*
+
 ## 📊 Sample Queries
 
 ### Basic Queries
@@ -276,6 +292,8 @@ sql_related/
 ├── setup_sakila_direct.sh              # Direct setup script
 ├── setup_sakila_combined.sql           # Combined schema + sample data
 ├── sakila-data-fun_sql.sql             # Complete data file (3.2MB, 46K+ records)
+├── import_full_sakila_fixed.sql        # Clean full dataset import script
+├── import_full_sakila_data.sql         # Full dataset import with verification
 ├── .gitignore                          # Git ignore rules
 ├── movie_rental_sakila/
 │   ├── sakila-schema.sql               # Original schema file
