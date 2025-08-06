@@ -1,0 +1,44 @@
+# Sakila Database Installation Steps
+
+## Step 1: Install MySQL
+- Download MySQL at this link: https://dev.mysql.com/downloads/file/?id=544297
+- ✅ COMPLETED
+
+## Step 2: Add MySQL to PATH
+- Find where MySQL was installed (usually /usr/local/mysql/bin or /Applications/MySQL/MySQL Server 8.0/bin)
+- Add to PATH or create alias
+- ✅ COMPLETED
+
+Commands run:
+```bash
+# Check if MySQL is installed in common locations
+ls -la /usr/local/mysql/bin/mysql 2>/dev/null || ls -la /Applications/MySQL*/bin/mysql 2>/dev/null || echo "MySQL not found in common locations"
+
+# Add MySQL bin directory to PATH permanently (so mysql command works from anywhere)
+echo 'export PATH="/usr/local/mysql/bin:$PATH"' >> ~/.zshrc
+
+# Reload shell configuration to apply the PATH change immediately
+source ~/.zshrc
+
+# Test if mysql command is now available
+mysql --version
+# ✅ RESULT: mysql Ver 9.4.0 for macos15 on arm64 (MySQL Community Server - GPL)
+```
+
+## Step 3: Create Fresh Database
+- Drop existing database if it exists and create new one
+- Import complete schema with all 16 tables, 7 views, and 3 stored functions
+
+Commands to run:
+```bash
+# Create fresh database
+mysql -u root -p -e "DROP DATABASE IF EXISTS fun_sql; CREATE DATABASE fun_sql;"
+
+# Import complete schema (16 tables, 7 views, 3 stored functions)
+mysql -u root -p fun_sql < movie_rental_sakila/sakila-schema-fun_sql.sql
+
+# Verify tables were created
+mysql -u root -p fun_sql -e "SHOW TABLES;"
+```
+
+✅ COMPLETED - All 16 tables and 7 views created successfully!
