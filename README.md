@@ -78,6 +78,38 @@ Sakila is a well-known sample database for MySQL that represents a movie rental 
    SOURCE setup_sakila_combined.sql;
    ```
 
+### Option 3: Full Dataset Setup (Recommended for Production)
+
+For the complete Sakila dataset with all 16,000+ records:
+
+1. **Create a fresh database:**
+   ```bash
+   mysql -u root -p -e "DROP DATABASE IF EXISTS fun_sql; CREATE DATABASE fun_sql;"
+   ```
+
+2. **Import the complete schema:**
+   ```bash
+   mysql -u root -p fun_sql < movie_rental_sakila/sakila-schema-fun_sql.sql
+   ```
+
+3. **Import the complete data (3.2MB, ~46,000 records):**
+   ```bash
+   mysql -u root -p fun_sql < sakila-data-fun_sql.sql
+   ```
+
+4. **Verify the import:**
+   ```bash
+   mysql -u root -p fun_sql -e "SELECT 'payment' as table_name, COUNT(*) as record_count FROM payment UNION ALL SELECT 'rental', COUNT(*) FROM rental ORDER BY record_count DESC;"
+   ```
+
+**Expected results:**
+- `payment`: 16,049 records
+- `rental`: 16,044 records
+- `film_actor`: 5,462 records
+- `inventory`: 4,581 records
+- `film`: 1,000 records
+- And more...
+
 ## 📊 Sample Queries
 
 ### Basic Queries
@@ -163,7 +195,77 @@ JOIN country cy ON c.country_id = cy.country_id
 JOIN staff m ON s.manager_staff_id = m.staff_id
 GROUP BY s.store_id
 ORDER BY total_sales DESC;
+
+-- Advanced queries for full dataset:
+
+-- Find the most popular films (full dataset)
+SELECT f.title, COUNT(*) as rental_count, SUM(p.amount) as revenue
+FROM film f
+JOIN inventory i ON f.film_id = i.film_id
+JOIN rental r ON i.inventory_id = r.inventory_id
+JOIN payment p ON r.rental_id = p.rental_id
+GROUP BY f.film_id, f.title
+ORDER BY rental_count DESC
+LIMIT 10;
+
+-- Find customers who spend the most money
+SELECT c.first_name, c.last_name, COUNT(*) as rental_count, SUM(p.amount) as total_spent
+FROM customer c
+JOIN payment p ON c.customer_id = p.customer_id
+GROUP BY c.customer_id
+ORDER BY total_spent DESC
+LIMIT 10;
+
+-- Find the busiest rental periods
+SELECT DATE(rental_date) as rental_day, COUNT(*) as rentals, SUM(p.amount) as revenue
+FROM rental r
+JOIN payment p ON r.rental_id = p.rental_id
+GROUP BY DATE(rental_date)
+ORDER BY rentals DESC
+LIMIT 10;
+
+-- Find films that are currently overdue
+SELECT f.title, c.first_name, c.last_name, r.rental_date, 
+       DATEDIFF(NOW(), r.rental_date) as days_overdue
+FROM film f
+JOIN inventory i ON f.film_id = i.film_id
+JOIN rental r ON i.inventory_id = r.inventory_id
+JOIN customer c ON r.customer_id = c.customer_id
+WHERE r.return_date IS NULL
+ORDER BY days_overdue DESC
+LIMIT 10;
 ```
+
+## 📊 Dataset Options
+
+### 🎯 Sample Dataset (Quick Start)
+- **Size**: ~1KB
+- **Records**: ~50 total
+- **Use case**: Learning, testing, quick setup
+- **Setup**: Use `setup_sakila_combined.sql`
+
+### 🚀 Full Dataset (Production Ready)
+- **Size**: 3.2MB
+- **Records**: ~46,000 total
+- **Use case**: Real-world queries, performance testing, production scenarios
+- **Setup**: Use `sakila-schema-fun_sql.sql` + `sakila-data-fun_sql.sql`
+
+**Full Dataset Breakdown:**
+- `payment`: 16,049 records
+- `rental`: 16,044 records  
+- `film_actor`: 5,462 records
+- `inventory`: 4,581 records
+- `film`: 1,000 records
+- `film_category`: 1,000 records
+- `address`: 603 records
+- `city`: 600 records
+- `customer`: 599 records
+- `actor`: 200 records
+- `country`: 109 records
+- `category`: 16 records
+- `language`: 6 records
+- `staff`: 2 records
+- `store`: 2 records
 
 ## 📁 Project Structure
 
@@ -172,13 +274,14 @@ sql_related/
 ├── README.md                           # This file
 ├── setup_sakila.sh                     # Automated setup script
 ├── setup_sakila_direct.sh              # Direct setup script
-├── setup_sakila_combined.sql           # Combined schema + data
+├── setup_sakila_combined.sql           # Combined schema + sample data
+├── sakila-data-fun_sql.sql             # Complete data file (3.2MB, 46K+ records)
 ├── .gitignore                          # Git ignore rules
 ├── movie_rental_sakila/
-│   ├── sakila-schema.sql               # Original schema
-│   ├── sakila-schema-fun_sql.sql       # Modified schema for fun_sql
-│   ├── sakila-data.sql                 # Sample data (large file)
-│   └── sakila_model.mwb                # MySQL Workbench model
+│   ├── sakila-schema.sql               # Original schema file
+│   ├── sakila-schema-fun_sql.sql       # Modified schema for fun_sql database
+│   ├── sakila-data.sql                 # Complete data file (3.2MB)
+│   └── sakila_model.mwb                # MySQL Workbench model file
 └── LICENSE                             # License file
 ```
 
