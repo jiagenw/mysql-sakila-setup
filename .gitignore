@@ -1,0 +1,33 @@
+# MySQL temporary files
+*.sql~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Log files
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Database dumps (if any)
+*.dump
+*.sql.bak
+
+# Environment files
+.env
+.env.local 
