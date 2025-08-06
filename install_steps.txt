@@ -42,3 +42,27 @@ mysql -u root -p fun_sql -e "SHOW TABLES;"
 ```
 
 ✅ COMPLETED - All 16 tables and 7 views created successfully!
+
+## Step 4: Import Complete Data (46,000+ records)
+- Import all sample data including payments, rentals, films, customers, etc.
+- This will populate all tables with realistic movie rental data
+
+Commands to run:
+```bash
+# Import complete data (3.2MB, ~46,000 records)
+mysql -u root -p fun_sql < sakila-data-fun_sql.sql
+
+# Verify data import
+mysql -u root -p fun_sql -e "SELECT 'payment' as table_name, COUNT(*) as record_count FROM payment UNION ALL SELECT 'rental', COUNT(*) FROM rental ORDER BY record_count DESC;"
+
+# Additional verification
+mysql -u root -p fun_sql -e "SELECT 'film' as table_name, COUNT(*) as record_count FROM film UNION ALL SELECT 'customer', COUNT(*) FROM customer UNION ALL SELECT 'actor', COUNT(*) FROM actor UNION ALL SELECT 'inventory', COUNT(*) FROM inventory ORDER BY record_count DESC;"
+```
+
+✅ COMPLETED - All data imported successfully!
+- payment: 16,049 records
+- rental: 16,044 records  
+- inventory: 4,581 records
+- film: 1,000 records
+- customer: 599 records
+- actor: 200 records
